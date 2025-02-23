@@ -7,6 +7,10 @@ from langchain_community.llms import CTransformers
 from langchain.text_splitter import RecursiveCharacterTextSplitter
 from langchain_community.vectorstores import FAISS
 from langchain.memory import ConversationBufferMemory
+from huggingface_hub import login
+
+# Authenticate with Hugging Face
+login(token="HUGGINGFACEHUB_API_TOKEN")
 
 # Load the PDF files from the path
 def load_documents():
