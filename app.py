@@ -7,6 +7,7 @@ from langchain_community.llms import CTransformers
 from langchain.text_splitter import RecursiveCharacterTextSplitter
 from langchain_community.vectorstores import FAISS
 from langchain.memory import ConversationBufferMemory
+from langchain_huggingface import HuggingFaceEmbeddings
 
 
 # Load the pdf files from the path
