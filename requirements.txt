@@ -9,5 +9,5 @@ faiss-cpu
 altair
 tiktoken
 huggingface-hub
-langchain_community.vectorstores
-langchain_community.document_loaders
+langchain.vectorstores
+langchain.document_loaders
