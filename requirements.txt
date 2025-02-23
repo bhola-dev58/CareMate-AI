@@ -6,3 +6,4 @@ huggingface-hub
 ctransformers
 faiss-cpu
 pypdf
+sentence-transformers
