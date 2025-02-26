@@ -9,4 +9,8 @@ pypdf
 sentence-transformers
 langchain-huggingface
 huggingface_hub
-
+langchain_community.embeddings
+langchain_community.document_loaders
+langchain_community.llms
+langchain_community.vectorstores
+langchain.memory
