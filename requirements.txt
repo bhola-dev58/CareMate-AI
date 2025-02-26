@@ -9,3 +9,6 @@ pypdf
 sentence-transformers
 langchain-huggingface
 huggingface_hub
+streamlit
+requests
+python-dotenv
