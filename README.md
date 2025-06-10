@@ -18,7 +18,7 @@ To get AI-Healthcare-Assistance and running on your local machine, follow these 
 1. Clone the repository:
 
 ```bash
-git clone https://github.com/Bhya23cse/AI-Healthcare-Assistance.git
+git clone https://github.com/bhola-dev58/AI-Healthcare-Assistance.git
 cd AI-Healthcare-Assistance
 ```
 
