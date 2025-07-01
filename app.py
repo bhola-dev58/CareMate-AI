@@ -2,13 +2,21 @@ import streamlit as st
 from streamlit_chat import message
 import google.generativeai as genai
 import re
+import os
+from dotenv import load_dotenv
 
-# Set your Gemini API key
-api_key = "AIzaSyA439COe4xznRhbrfbd3C8cBEF4eW4b7gk"
 
-# Configure Gemini
-genai.configure(api_key=api_key)
-model = genai.GenerativeModel(model_name="gemini-1.5-flash")
+# Loading the gemini API key in the this code
+load_dotenv()
+api_key = os.getenv("GEMINI_API_KEY")
+
+
+# Configure Gemini API
+if not api_key:
+    st.error("API key not found. Please check your .env file.")
+genai.configure(api_key=api_key) 
+model = genai.GenerativeModel(model_name="gemini-1.5-flash")#gemini-2.5-pro
+
 
 # Health-related keywords
 HEALTH_KEYWORDS = [
@@ -18,14 +26,14 @@ HEALTH_KEYWORDS = [
     "vaccine", "infection", "cholesterol", "diabetes", "asthma", "wellness", "stress"
 ]
 
+
 def is_health_related(text):
     return any(keyword in text.lower() for keyword in HEALTH_KEYWORDS)
 
 # Format response text
 def format_response(text):
-    # Add bullet points and structure if the response contains lists or sections
     text = re.sub(r"(?<=\n)- ", "\n• ", text)
-    text = re.sub(r"\*\*(.*?)\*\*", r"🔹 **\1**", text)  # highlight bolded headings
+    text = re.sub(r"\*\*(.*?)\*\*", r"🔹 **\1**", text)
     return text.strip()
 
 # Get structured response from Gemini
@@ -49,25 +57,14 @@ def initialize_session_state():
     st.session_state.setdefault('history', [])
     st.session_state.setdefault('generated', ["Hello! Ask me any health-related question 🩺"])
     st.session_state.setdefault('past', ["Hi! 👋"])
-    st.session_state.setdefault('logged_in', False)
 
-# Sidebar
+# Sidebar (Login Removed)
 with st.sidebar:
     st.title("User Profile")
     st.image(
         "https://png.pngtree.com/png-clipart/20200224/original/pngtree-avatar-icon-profile-icon-member-login-vector-isolated-png-image_5247852.jpg",
         caption="Profile Picture", width=150
     )
-    st.header("Login")
-    username = st.text_input("Username")
-    password = st.text_input("Password", type="password")
-    if st.button("Login"):
-        if username and password:
-            st.session_state['logged_in'] = True
-            st.success(f"✅ Logged in as {username}")
-        else:
-            st.error("❌ Please enter both username and password")
-
     st.header("About")
     st.write("This chatbot is powered by Gemini 1.5 Flash and designed to answer only health-related queries in a clear, structured way.")
 
@@ -78,31 +75,28 @@ st.title("🩺 AI-Powered Healthcare Assistant")
 initialize_session_state()
 
 # Chat Interface
-if st.session_state['logged_in']:
-    reply_container = st.container()
-    container = st.container()
+reply_container = st.container()
+container = st.container()
 
-    with container:
-        with st.form(key='chat_form', clear_on_submit=True):
-            user_input = st.text_input("Ask a health-related question...", key='input')
-            submit_button = st.form_submit_button(label='Send')
+with container:
+    with st.form(key='chat_form', clear_on_submit=True):
+        user_input = st.text_input("Ask a health-related question...", key='input')
+        submit_button = st.form_submit_button(label='Send')
 
-        if submit_button and user_input:
-            if is_health_related(user_input):
-                output, updated_history = get_gemini_response(user_input, st.session_state['history'])
-            else:
-                output = "⚠️ I'm here to help only with health-related questions."
-                updated_history = st.session_state['history']
+    if submit_button and user_input:
+        if is_health_related(user_input):
+            output, updated_history = get_gemini_response(user_input, st.session_state['history'])
+        else:
+            output = "⚠️ I'm here to help only with health-related questions."
+            updated_history = st.session_state['history']
 
-            st.session_state['past'].append(user_input)
-            st.session_state['generated'].append(output)
-            st.session_state['history'] = updated_history
+        st.session_state['past'].append(user_input)
+        st.session_state['generated'].append(output)
+        st.session_state['history'] = updated_history
 
-    if st.session_state['generated']:
-        with reply_container:
-            for i in range(len(st.session_state['generated'])):
-                if i < len(st.session_state['past']):
-                    message(st.session_state["past"][i], is_user=True, key=str(i) + '_user', avatar_style="thumbs")
-                message(st.session_state["generated"][i], key=str(i), avatar_style="fun-emoji")
-else:
-    st.warning("🔐 Please log in to start chatting.")
+if st.session_state['generated']:
+    with reply_container:
+        for i in range(len(st.session_state['generated'])):
+            if i < len(st.session_state['past']):
+                message(st.session_state["past"][i], is_user=True, key=str(i) + '_user', avatar_style="thumbs")
+            message(st.session_state["generated"][i], key=str(i), avatar_style="fun-emoji")
